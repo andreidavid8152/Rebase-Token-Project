@@ -5,7 +5,7 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
-/*
+/**
  * @title RebaseToken
  * @author Andrei Flores
  * @notice This is a cross-chain rebase token that incentivises users to deposit into a vault and gain interest in rewards
@@ -33,7 +33,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         _grantRole(MINT_AND_BURN_ROLE, _account);
     }
 
-    /*
+    /**
      * @notice Set the interest rate in the contract
      * @param _newInterestRate The new interst rate to set
      * @dev The interest rate can only decrease
@@ -50,7 +50,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         emit InterestRateSet(_newInterestRate);
     }
 
-    /*
+    /**
      * @notice Get the principle balance of a user. This is the number of tokens that have currently been minted to the user, not including any interest that has accrued since the last time the user interacted with the protocol.
      * @param _user The user to get the principle balance for
      * @return The principle balance of the user
@@ -59,7 +59,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         return super.balanceOf(_user);
     }
 
-    /*
+    /**
      * @notice Mint the user tokens when they deposit into the vault
      * @param _to The user to mint the tokens to
      * @param _amount The amount of tokens to mint
@@ -70,7 +70,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         _mint(_to, _amount);
     }
 
-    /*
+    /**
      * @notice Burn the user tokens when they withdraw from the vault
      * @param _from The user to burn the tokens from
      * param _amount The amount of tokens to burn
@@ -83,7 +83,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         _burn(_from, _amount);
     }
 
-    /*
+    /**
      * calculate the balance for the user including the interest that has accumulated since the last update
      * (principle balance) + some interest that has accrued
      * @param _user The user to calculate the balance for
@@ -97,7 +97,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
     }
 
 
-    /*
+    /**
      * @notice Transfer tokens from one user to another
      * @param _recipient The user to transfer the tokens to
      * @param _amount The amount of tokens to transfer
@@ -119,7 +119,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
     }
 
 
-    /*
+    /**
      * @notice Transfer tokens from one user to another
      * @param _sender The user to transfer the tokens from
      * @param _recipient The user to transfer the tokens to
@@ -141,10 +141,10 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         return super.transferFrom(_sender, _recipient, _amount);
     }
 
-    /*
+    /**
      * @notice Calculate the interest that has accumulated since the last update
      * @param _user The user to calculate the interest accumulated for
-     * @return The interest that has accumulated since the last update
+     * @return linearInterest The interest that has accumulated since the last update
     */
     function _calculateUserAccumulatedInterestSinceLastUpdate(address _user) internal view returns (uint256 linearInterest) {
         // we need to calculate the interest that has accumulated since the last update
@@ -159,7 +159,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
     }
 
 
-    /*
+    /**
      * @notice Mint the accrued interest to the user since the last time they interacted with the protocol (e.g burn, mint, transfer)
      * @param _user The user to mint the accrued interest to
     */
@@ -176,7 +176,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         _mint(_user, balanceIncrease);
     }
 
-    /*
+    /**
      * @notice Get the interest rate that is currently set for the contract. Any future depositors will receive this interest rate
      * @return The interest rate for the contract
     */ 
@@ -184,7 +184,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         return sInteresRate;
     }
 
-    /*
+    /**
      * @notice Get the interest rate for the user
      * @param _user The user to get the interest rate for
      * @return The interest rate for the user
