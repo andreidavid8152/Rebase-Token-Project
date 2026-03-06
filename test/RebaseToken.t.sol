@@ -164,4 +164,43 @@ contract RebaseTokenTest is Test {
 
         assertEq(intialInterestRate, rebaseToken.getInterestRate());
     }
+
+    function testTransferWithdrawAll(uint256 amount) public {
+
+        // Arrange
+        amount = bound(amount, 1e5, type(uint96).max);
+        address user2 = makeAddr("user2");
+
+        vm.deal(user, amount);
+        vm.prank(user);
+        vault.deposit{value: amount}();
+
+        // Act
+        vm.prank(user);
+        rebaseToken.transfer(user2, type(uint256).max);
+
+        // Assert
+        assertEq(rebaseToken.balanceOf(user), 0);
+        assertEq(rebaseToken.balanceOf(user2), amount);
+    }
+
+    function testTransferFromWithdrawAll(uint256 amount) public {
+
+        // Arrange
+        amount = bound(amount, 1e5, type(uint96).max);
+        address user2 = makeAddr("user2");
+
+        vm.deal(user, amount);
+        vm.startPrank(user);
+        vault.deposit{value: amount}();
+        rebaseToken.approve(address(this), amount);
+        vm.stopPrank();
+
+        // Act
+        rebaseToken.transferFrom(user, user2, type(uint256).max);
+
+        // Assert
+        assertEq(rebaseToken.balanceOf(user), 0);
+        assertEq(rebaseToken.balanceOf(user2), amount);
+    }
 }
