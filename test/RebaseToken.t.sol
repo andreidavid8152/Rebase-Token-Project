@@ -122,8 +122,8 @@ contract RebaseTokenTest is Test {
         assertEq(user2BalanceAfterTransfer, amountToSend);
 
         // check the user interest rate has been inherited (5e10 not 4e10)
-        assertEq(rebaseToken.getUserInteresRate(user), 5e10);
-        assertEq(rebaseToken.getUserInteresRate(user2), 5e10);
+        assertEq(rebaseToken.getUserInterestRate(user), 5e10);
+        assertEq(rebaseToken.getUserInterestRate(user2), 5e10);
     }
 
     function testCannotSetInterestRate(uint256 newInterestRate) public {
@@ -133,9 +133,11 @@ contract RebaseTokenTest is Test {
     }
 
     function testCannotCallMintAndBurn() public {
+        uint256 interestRate = rebaseToken.getInterestRate();
+
         vm.prank(user);
         vm.expectPartialRevert(bytes4(IAccessControl.AccessControlUnauthorizedAccount.selector));
-        rebaseToken.mint(user, 100);
+        rebaseToken.mint(user, 100, interestRate);
         vm.expectPartialRevert(bytes4(IAccessControl.AccessControlUnauthorizedAccount.selector));
         rebaseToken.burn(user, 100);
     }
