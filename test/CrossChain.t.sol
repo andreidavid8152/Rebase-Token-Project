@@ -174,7 +174,7 @@ contract CrossChainTest is Test {
             tokenAmounts: tokenAmounts,
             feeToken: localNetworkDetails.linkAddress,
             extraArgs: Client._argsToBytes(Client.EVMExtraArgsV2({
-                gasLimit: 100_000, // The value in ccip local must be > 0 (it is a bug), otherwise in real word this could be set to 0
+                gasLimit: 500_000, // The value in ccip local must be > 0 (it is a bug), otherwise in real word this could be set to 0
                 allowOutOfOrderExecution: false
             }))
         });
@@ -220,6 +220,22 @@ contract CrossChainTest is Test {
         assertEq(sepoliaToken.balanceOf(user), SEND_VALUE);
 
         bridgeTokens(SEND_VALUE, sepoliaFork, arbSepoliaFork, sepoliaNetworkDetails, arbSepoliaNetworkDetails, sepoliaToken, arbSepoliaToken);
+
+        // Another chain bridge
+        vm.selectFork(arbSepoliaFork);
+        vm.warp(block.timestamp + 20 minutes);
+        bridgeTokens(arbSepoliaToken.balanceOf(user), arbSepoliaFork, sepoliaFork, arbSepoliaNetworkDetails, sepoliaNetworkDetails, arbSepoliaToken, sepoliaToken);
+    }
+
+    function testBridgeSomeTokens() public {
+        vm.selectFork(sepoliaFork);
+        vm.deal(user, SEND_VALUE);
+        vm.prank(user);
+        Vault(payable(address(vault))).deposit{value: 1e3}();
+
+        assertEq(sepoliaToken.balanceOf(user), 1e3);
+
+        bridgeTokens(1e3, sepoliaFork, arbSepoliaFork, sepoliaNetworkDetails, arbSepoliaNetworkDetails, sepoliaToken, arbSepoliaToken);
 
         // Another chain bridge
         vm.selectFork(arbSepoliaFork);
