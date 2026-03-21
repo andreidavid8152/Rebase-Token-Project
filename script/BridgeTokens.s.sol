@@ -15,12 +15,12 @@ contract BridgeTokensScripts is Script {
         tokenAmounts[0] = Client.EVMTokenAmount({
             token: tokenToSendAddress,
             amount: amountToSend
-        })
+        });
 
-        Client.EVM2AnyMessage message = Client.EVM2AnyMessage({
+        Client.EVM2AnyMessage memory message = Client.EVM2AnyMessage({
             receiver: abi.encode(receiverAddress),
             data: "",
-            tokenAmonts: tokenAmounts,
+            tokenAmounts: tokenAmounts,
             feeToken: linkTokenAddress,
             extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 0}))
         });
